@@ -1,13 +1,11 @@
 fn main() {
     #[cfg(target_arch = "x86_64")]
-
     use std::arch::x86_64::*;
-    use std::arch::wasm::*;
 
     unsafe {
         // レジスタにベクトル（[0.,1.,2.,3.]）
-        let vec_a: __m256d = _mm256_setr_pd(0.,1.,2.,3.);
-        let vec_b: __m256d = _mm256_setr_pd(0.,1.,2.,3.);
+        let vec_a: __m256d = _mm256_setr_pd(0., 1., 2., 3.);
+        let vec_b: __m256d = _mm256_setr_pd(0., 1., 2., 3.);
 
         // 足し算
         // [0.0, 1.0, 2.0, 3.0] + [0.0, 1.0, 2.0, 3.0]
@@ -53,11 +51,11 @@ fn main() {
         println!("permute: {:?}, {:b} => {:?}", vec_a, 1, vec_permute);
 
         let vec_permute = _mm256_permute_pd(vec_a, 2);
-        println!("permute: {:?}, {:b} => {:?}", vec_a, 2 , vec_permute);
+        println!("permute: {:?}, {:b} => {:?}", vec_a, 2, vec_permute);
 
         let vec_permute = _mm256_permute_pd(vec_a, 3);
         println!("permute: {:?}, {:b} => {:?}", vec_a, 3, vec_permute);
-        
+
         let vec_permute = _mm256_permute_pd(vec_a, 4);
         println!("permute: {:?}, {:b} => {:?}", vec_a, 4, vec_permute);
 
@@ -93,9 +91,13 @@ fn main() {
 
         let vec_permute = _mm256_permute_pd(vec_a, 15);
         println!("permute: {:?}, {:b} => {:?}", vec_a, 15, vec_permute);
+
+        let vec_a_128: __m128i = _mm_set_epi64x(1, 2);
+
+        let shuffled = _mm_shuffle_epi32::<3>(vec_a_128);
+        println!("shuffled: {:?}, {:b} => {:?}", vec_a_128, 3, shuffled);
     }
 }
-
 
 fn simurate_permute(vec: [f64; 4], cmd: u8) -> [f64; 4] {
     let cmd1 = cmd & 0b1111;
@@ -103,8 +105,8 @@ fn simurate_permute(vec: [f64; 4], cmd: u8) -> [f64; 4] {
 
     println!("cmd1: {}", cmd1);
     println!("cmd2: {}", cmd2);
-    
-    fn part_of_simurate_permute(vec: [f64; 4], cmd: u8, base: usize) -> [f64; 2]{
+
+    fn part_of_simurate_permute(vec: [f64; 4], cmd: u8, base: usize) -> [f64; 2] {
         let mut res = [0., 0.];
 
         let zero = base;
@@ -131,17 +133,16 @@ fn simurate_permute(vec: [f64; 4], cmd: u8) -> [f64; 4] {
 
     let res1 = part_of_simurate_permute(vec, cmd1, 0);
     let res2 = part_of_simurate_permute(vec, cmd2, 2);
-    
-        
+
     println!("res1: {:?}", res1);
     println!("res2: {:?}", res2);
-    
+
     return [res1[0], res1[1], res2[0], res2[1]];
 }
 
 #[test]
 fn test_simurate_permute() {
-    let vec = [0.,1.,2.,3.];
+    let vec = [0., 1., 2., 3.];
 
     let res = simurate_permute(vec, 0b0000);
     println!("my permute: {:?}, {:b} => {:?}", vec, 0b0000, res);
