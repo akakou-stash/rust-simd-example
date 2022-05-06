@@ -2,6 +2,7 @@ fn main() {
     #[cfg(target_arch = "x86_64")]
 
     use std::arch::x86_64::*;
+    use std::arch::wasm::*;
 
     unsafe {
         // レジスタにベクトル（[0.,1.,2.,3.]）
@@ -12,7 +13,7 @@ fn main() {
         // [0.0, 1.0, 2.0, 3.0] + [0.0, 1.0, 2.0, 3.0]
         // => [0.0, 2.0, 4.0, 6.0]
         let vec_sum = _mm256_add_pd(vec_a, vec_b);
-        println!("sum: {:?} + {:?} = {:?}", vec_a, vec_a, vec_sum);
+        println!("sum: {:?} + {:?} = {:?}", vec_a, vec_b, vec_sum);
 
         // 掛け算
         // [0.0, 1.0, 2.0, 3.0] * [0.0, 1.0, 2.0, 3.0]
@@ -31,6 +32,18 @@ fn main() {
         // => [NaN, 1.0, 2.0, 3.0]
         let vec_div = _mm256_div_pd(vec_mul, vec_a);
         println!("div: {:?} / {:?}  = {:?}", vec_mul, vec_a, vec_div);
+
+        // 水平足し算
+        // [0.0, 1.0, 2.0, 3.0] + [0.0, 1.0, 2.0, 3.0]
+        // => [1.0, 1.0, 5.0, 5.0]
+        let vec_hsum = _mm256_hadd_pd(vec_a, vec_b);
+        println!("hsum: {:?} + {:?} = {:?}", vec_a, vec_b, vec_hsum);
+
+        // 水平引き算
+        // [0.0, 2.0, 4.0, 6.0] - [0.0, 1.0, 4.0, 9.0]
+        // => [-2.0, -1.0, -2.0, -5.0]
+        let vec_hsub = _mm256_hsub_pd(vec_sum, vec_mul);
+        println!("hsub: {:?} - {:?}  = {:?}", vec_sum, vec_mul, vec_hsub);
 
         // 位置入れ替え
         let vec_permute = _mm256_permute_pd(vec_a, 0);
@@ -82,7 +95,6 @@ fn main() {
         println!("permute: {:?}, {:b} => {:?}", vec_a, 15, vec_permute);
     }
 }
-
 
 
 fn simurate_permute(vec: [f64; 4], cmd: u8) -> [f64; 4] {
