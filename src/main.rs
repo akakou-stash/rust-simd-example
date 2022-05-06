@@ -93,9 +93,14 @@ fn main() {
         println!("permute: {:?}, {:b} => {:?}", vec_a, 15, vec_permute);
 
         let vec_a_128: __m128i = _mm_set_epi64x(1, 2);
+        let vec_b_128: __m128i = _mm_set_epi64x(2, 3);
 
         let shuffled = _mm_shuffle_epi32::<3>(vec_a_128);
         println!("shuffled: {:?}, {:b} => {:?}", vec_a_128, 3, shuffled);
+
+        let xored = _mm_xor_si128(vec_a_128, vec_b_128);
+        println!("xor: {:?}, {:?} => {:?}", vec_a_128, vec_b_128, xored);
+
     }
 }
 
