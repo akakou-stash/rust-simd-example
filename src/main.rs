@@ -101,6 +101,9 @@ fn main() {
         let xored = _mm_xor_si128(vec_a_128, vec_b_128);
         println!("xor: {:?}, {:?} => {:?}", vec_a_128, vec_b_128, xored);
 
+        let mut dst: __m128i = vec_a_128.clone();
+        let stored = _mm_store_si128(&mut dst, vec_b_128);
+        println!("store: {:?} <- {:?} => {:?}", vec_a_128, vec_b_128, dst);
     }
 }
 
